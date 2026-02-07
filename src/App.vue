@@ -2,7 +2,7 @@
   <div class="page">
     <header class="header">
       <h1>Учетные записи</h1>
-      <button class="add-button" type="button" @click="addAccount">+</button>
+      <UIButton class="add-button" @click="addAccount">+</UIButton>
     </header>
 
     <section class="hint">
@@ -21,78 +21,27 @@
 
       <div v-if="accounts.length === 0" class="empty">Добавьте учетную запись.</div>
 
-      <div v-for="account in localAccounts" :key="account.id" class="account-row">
-        <input
-          v-model="account.labelInput"
-          type="text"
-          placeholder="Введите метки"
-          :class="['input', { invalid: account.errors.label }]"
-          maxlength="50"
-          @blur="validateAndSave(account.id)"
-        />
-
-        <select
-          v-model="account.type"
-          class="input select"
-          :class="{ invalid: account.errors.type }"
-          @change="handleTypeChange(account.id)"
-        >
-          <option value="" disabled>Выберите тип</option>
-          <option value="LOCAL">Локальная</option>
-          <option value="LDAP">LDAP</option>
-        </select>
-
-        <input
-          v-model="account.login"
-          type="text"
-          placeholder="Введите логин"
-          :class="['input', { invalid: account.errors.login }]"
-          maxlength="100"
-          @blur="validateAndSave(account.id)"
-        />
-
-        <input
-          v-if="account.type === 'LOCAL'"
-          v-model="account.password"
-          type="password"
-          placeholder="Введите пароль"
-          :class="['input', { invalid: account.errors.password }]"
-          maxlength="100"
-          @blur="validateAndSave(account.id)"
-        />
-        <div v-else class="password-placeholder"></div>
-
-        <button class="icon-button" type="button" @click="removeAccount(account.id)">
-          🗑
-        </button>
-      </div>
+      <AccountRow
+        v-for="account in localAccounts"
+        :key="account.id"
+        :account="account"
+        @remove="removeAccount"
+        @validate="validateAndSave"
+        @type-change="handleTypeChange"
+      />
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue';
-import { useAccountsStore, type AccountType } from './stores/accounts';
+import AccountRow, { type LocalAccount } from './components/AccountRow.vue';
+import UIButton from './components/UIButton.vue';
+import { useAccountsStore } from './stores/accounts';
 
 const store = useAccountsStore();
 
 const accounts = computed(() => store.accounts);
-
-type AccountErrors = {
-  label: boolean;
-  type: boolean;
-  login: boolean;
-  password: boolean;
-};
-
-type LocalAccount = {
-  id: string;
-  labelInput: string;
-  type: AccountType | '';
-  login: string;
-  password: string;
-  errors: AccountErrors;
-};
 
 const localAccounts = reactive<LocalAccount[]>([]);
 
@@ -201,16 +150,6 @@ const handleTypeChange = (id: string) => {
   margin-bottom: 16px;
 }
 
-.add-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  border: 1px solid #cbd5f5;
-  background: #fff;
-  font-size: 24px;
-  cursor: pointer;
-}
-
 .hint {
   display: flex;
   align-items: center;
@@ -247,48 +186,6 @@ const handleTypeChange = (id: string) => {
   font-size: 14px;
 }
 
-.account-row {
-  display: grid;
-  grid-template-columns: 1.2fr 0.9fr 1fr 1fr 40px;
-  gap: 12px;
-  align-items: center;
-}
-
-.input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #cbd5f5;
-  font-size: 14px;
-  background: #fff;
-}
-
-.select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%2365778A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-}
-
-.password-placeholder {
-  height: 40px;
-}
-
-.icon-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid #cbd5f5;
-  background: #fff;
-  cursor: pointer;
-}
-
-.input.invalid,
-.select.invalid {
-  border-color: #ef4444;
-}
-
 .empty {
   padding: 16px;
   color: #7a889b;
@@ -299,13 +196,6 @@ const handleTypeChange = (id: string) => {
 @media (max-width: 900px) {
   .accounts-header {
     display: none;
-  }
-
-  .account-row {
-    grid-template-columns: 1fr;
-    padding: 16px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
   }
 }
 </style>
