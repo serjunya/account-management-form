@@ -45,23 +45,36 @@ const accounts = computed(() => store.accounts);
 
 const localAccounts = reactive<LocalAccount[]>([]);
 
+const createLocalAccount = (account: (typeof accounts.value)[number]): LocalAccount => ({
+  id: account.id,
+  labelInput: account.labels.map((item) => item.text).join('; '),
+  type: account.type,
+  login: account.login,
+  password: account.password ?? '',
+  errors: {
+    label: false,
+    type: false,
+    login: false,
+    password: false,
+  },
+});
+
 const syncLocalAccounts = () => {
-  localAccounts.splice(0, localAccounts.length);
-  accounts.value.forEach((account) => {
-    localAccounts.push({
-      id: account.id,
-      labelInput: account.labels.map((item) => item.text).join('; '),
-      type: account.type,
-      login: account.login,
-      password: account.password ?? '',
-      errors: {
-        label: false,
-        type: false,
-        login: false,
-        password: false,
-      },
-    });
+  const nextAccounts = accounts.value;
+  const existingIds = new Set(localAccounts.map((item) => item.id));
+
+  nextAccounts.forEach((account) => {
+    if (!existingIds.has(account.id)) {
+      localAccounts.push(createLocalAccount(account));
+    }
   });
+
+  const nextIds = new Set(nextAccounts.map((account) => account.id));
+  for (let index = localAccounts.length - 1; index >= 0; index -= 1) {
+    if (!nextIds.has(localAccounts[index].id)) {
+      localAccounts.splice(index, 1);
+    }
+  }
 };
 
 watch(
@@ -69,7 +82,7 @@ watch(
   () => {
     syncLocalAccounts();
   },
-  { deep: true, immediate: true },
+  { immediate: true },
 );
 
 const addAccount = () => {
