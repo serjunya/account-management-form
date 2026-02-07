@@ -115,14 +115,17 @@ const syncLocalAccounts = () => {
   });
 };
 
-syncLocalAccounts();
-
-watch(accounts, () => {
-  syncLocalAccounts();
-});
+watch(
+  accounts,
+  () => {
+    syncLocalAccounts();
+  },
+  { deep: true, immediate: true },
+);
 
 const addAccount = () => {
   store.addAccount();
+  syncLocalAccounts();
 };
 
 const removeAccount = (id: string) => {
