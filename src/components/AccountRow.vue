@@ -2,6 +2,7 @@
   <div class="account-row">
     <UITextField
       v-model="account.labelInput"
+      :name="`labels-${account.id}`"
       placeholder="Введите метки"
       :maxlength="50"
       :invalid="account.errors.label"
@@ -10,6 +11,7 @@
 
     <UIDropdownField
       v-model="account.type"
+      :name="`type-${account.id}`"
       :invalid="account.errors.type"
       @change="$emit('type-change', account.id)"
     >
@@ -20,6 +22,7 @@
 
     <UITextField
       v-model="account.login"
+      :name="`login-${account.id}`"
       placeholder="Введите логин"
       :maxlength="100"
       :invalid="account.errors.login"
@@ -29,6 +32,7 @@
     <UITextField
       v-if="account.type === 'LOCAL'"
       v-model="account.password"
+      :name="`password-${account.id}`"
       type="password"
       placeholder="Введите пароль"
       :maxlength="100"

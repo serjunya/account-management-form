@@ -3,6 +3,8 @@
     v-model="modelValue"
     class="input select"
     :class="{ invalid }"
+    :id="inputId"
+    :name="name"
     @change="$emit('change')"
   >
     <slot />
@@ -10,18 +12,26 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 const modelValue = defineModel<string>({ required: true });
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     invalid?: boolean;
+    name?: string;
+    id?: string;
   }>(),
   {
     invalid: false,
+    name: undefined,
+    id: undefined,
   },
 );
 
 defineEmits<{ (event: 'change'): void }>();
+
+const inputId = computed(() => props.id ?? props.name);
 </script>
 
 <style scoped>
