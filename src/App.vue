@@ -28,7 +28,6 @@
         @remove="removeAccount"
         @validate="validateAndSave"
         @type-change="handleTypeChange"
-        @toggle-password="togglePassword"
       />
     </section>
   </div>
@@ -52,7 +51,6 @@ const createLocalAccount = (account: (typeof accounts.value)[number]): LocalAcco
   type: account.type,
   login: account.login,
   password: account.password ?? '',
-  showPassword: false,
   errors: {
     label: false,
     type: false,
@@ -143,16 +141,9 @@ const handleTypeChange = (id: string) => {
 
   if (account.type === 'LDAP') {
     account.password = '';
-    account.showPassword = false;
   }
 
   validateAndSave(id);
-};
-
-const togglePassword = (id: string) => {
-  const account = localAccounts.find((item) => item.id === id);
-  if (!account) return;
-  account.showPassword = !account.showPassword;
 };
 </script>
 
