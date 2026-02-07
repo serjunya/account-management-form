@@ -1,5 +1,5 @@
 <template>
-  <div class="account-row" :class="{ ldap: account.type === 'LDAP' }">
+  <div class="account-row">
     <UITextField
       v-model="account.labelInput"
       placeholder="Введите метки"
@@ -18,28 +18,24 @@
       <option value="LDAP">LDAP</option>
     </UIDropdownField>
 
-    <div class="login-field">
-      <UITextField
-        v-model="account.login"
-        placeholder="Введите логин"
-        :maxlength="100"
-        :invalid="account.errors.login"
-        @blur="$emit('validate', account.id)"
-      />
-    </div>
+    <UITextField
+      v-model="account.login"
+      placeholder="Введите логин"
+      :maxlength="100"
+      :invalid="account.errors.login"
+      @blur="$emit('validate', account.id)"
+    />
 
-    <div class="password-field">
-      <UITextField
-        v-if="account.type === 'LOCAL'"
-        v-model="account.password"
-        type="password"
-        placeholder="Введите пароль"
-        :maxlength="100"
-        :invalid="account.errors.password"
-        @blur="$emit('validate', account.id)"
-      />
-      <div v-else class="password-placeholder"></div>
-    </div>
+    <UITextField
+      v-if="account.type === 'LOCAL'"
+      v-model="account.password"
+      type="password"
+      placeholder="Введите пароль"
+      :maxlength="100"
+      :invalid="account.errors.password"
+      @blur="$emit('validate', account.id)"
+    />
+    <div v-else class="password-placeholder"></div>
 
     <UIButton variant="icon" @click="$emit('remove', account.id)">🗑</UIButton>
   </div>
@@ -83,27 +79,6 @@ defineEmits<{
   grid-template-columns: 1.2fr 0.9fr 1fr 1fr 40px;
   gap: 12px;
   align-items: center;
-}
-
-.account-row.ldap {
-  grid-template-columns: 1.2fr 0.9fr 1fr 40px;
-}
-
-.login-field {
-  width: 100%;
-}
-
-.account-row.ldap .login-field {
-  grid-column: 3 / 4;
-}
-
-.password-field {
-  width: 100%;
-}
-
-.account-row.ldap .password-field {
-  grid-column: 3 / 4;
-  display: none;
 }
 
 .password-placeholder {
