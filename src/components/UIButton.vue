@@ -31,6 +31,7 @@ const { type, variant } = props;
   background: #fff;
   cursor: pointer;
   border-radius: 8px;
+  display: flex;
 }
 
 .ui-button.primary {
@@ -42,6 +43,8 @@ const { type, variant } = props;
 .ui-button.icon {
   width: 32px;
   height: 32px;
+  justify-content: center;
+  align-items: center;
   border-radius: 6px;
 }
 </style>

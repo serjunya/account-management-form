@@ -2,7 +2,9 @@
   <div class="page">
     <header class="header">
       <h1>Учетные записи</h1>
-      <UIButton class="add-button" @click="addAccount">+</UIButton>
+      <UIButton class="add-button" @click="addAccount">
+        <img src="./assets/plus.svg" style="width: 100%;" />
+      </UIButton>
     </header>
 
     <section class="hint">
@@ -47,7 +49,7 @@ const localAccounts = reactive<LocalAccount[]>([]);
 
 const createLocalAccount = (account: (typeof accounts.value)[number]): LocalAccount => ({
   id: account.id,
-  labelInput: account.labels.map((item) => item.text).join('; '),
+  labelInput: account.labels.map((item) => item.text).join(';'),
   type: account.type,
   login: account.login,
   password: account.password ?? '',
@@ -178,7 +180,7 @@ const handleTypeChange = (id: string) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
+  min-width: 28px;
   height: 28px;
   border-radius: 50%;
   border: 1px solid #9aa7b8;
@@ -206,7 +208,7 @@ const handleTypeChange = (id: string) => {
   border-radius: 12px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 650px) {
   .accounts-header {
     display: none;
   }
