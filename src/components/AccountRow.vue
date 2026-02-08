@@ -1,5 +1,7 @@
 <template>
-  <div class="account-row">
+  <div class="account-row"
+  :style="`grid-template-columns: 1.2fr 0.9fr ${isAccountLocal ? '1fr 1fr' : '2.05fr'} 40px;`"
+  >
     <UITextField
       v-model="account.labelInput"
       :name="`labels-${account.id}`"
@@ -30,7 +32,7 @@
     />
 
     <UITextField
-      v-if="account.type === 'LOCAL'"
+      v-if="isAccountLocal"
       v-model="account.password"
       :name="`password-${account.id}`"
       type="password"
@@ -39,13 +41,15 @@
       :invalid="account.errors.password"
       @blur="$emit('validate', account.id)"
     />
-    <div v-else class="password-placeholder"></div>
 
-    <UIButton variant="icon" @click="$emit('remove', account.id)">🗑</UIButton>
+    <UIButton style="width: 40px" variant="icon" @click="$emit('remove', account.id)">
+      <img src="../assets/trash.svg" />
+    </UIButton>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import UIButton from './UIButton.vue';
 import UIDropdownField from './UIDropdownField.vue';
 import UITextField from './UITextField.vue';
@@ -66,7 +70,7 @@ export type LocalAccount = {
   errors: AccountErrors;
 };
 
-defineProps<{
+const props = defineProps<{
   account: LocalAccount;
 }>();
 
@@ -75,12 +79,13 @@ defineEmits<{
   (event: 'validate', id: string): void;
   (event: 'type-change', id: string): void;
 }>();
+
+const isAccountLocal = computed(() => props.account.type === 'LOCAL');
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .account-row {
   display: grid;
-  grid-template-columns: 1.2fr 0.9fr 1fr 1fr 40px;
   gap: 12px;
   align-items: center;
 }
@@ -89,12 +94,18 @@ defineEmits<{
   height: 40px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 650px) {
   .account-row {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
     padding: 16px;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
+    & > * {
+      width: 100%;
+      flex: 1 0 32px;
+    }
   }
 }
 </style>
